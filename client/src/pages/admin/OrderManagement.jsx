@@ -22,6 +22,7 @@ const OrderManagement = () => {
       const { data } = await API.get('/orders');
       setOrders(data.orders);
     } catch (error) {
+      console.error('Failed to load orders:', error);
       toast.error('Failed to load orders.');
     } finally {
       setLoading(false);
@@ -29,7 +30,11 @@ const OrderManagement = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    const initFetch = async () => {
+      await fetchOrders();
+    };
+    initFetch();
+    
     const interval = setInterval(fetchOrders, 30000);
     return () => clearInterval(interval);
   }, []);
