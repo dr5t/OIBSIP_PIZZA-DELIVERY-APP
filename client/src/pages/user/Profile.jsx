@@ -5,7 +5,7 @@ import API from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
-  const { user, login } = useAuth(); // using login to update context user state
+  const { user, token, login } = useAuth(); // using login to update context user state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -46,8 +46,7 @@ const Profile = () => {
         address: formData.address
       });
       
-      // Update local storage and context
-      const token = localStorage.getItem('token');
+      // Update context
       login(data.user, token);
       
       toast.success(data.message);

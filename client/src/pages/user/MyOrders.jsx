@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 
 const STATUS_CONFIG = {
@@ -10,8 +10,17 @@ const STATUS_CONFIG = {
 };
 
 const MyOrders = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleReorder = (order) => {
+    sessionStorage.setItem('pizza_order', JSON.stringify({
+      pizzaData: order.pizzaDetails,
+      totalPrice: order.totalPrice
+    }));
+    navigate('/checkout');
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -139,11 +148,19 @@ const MyOrders = () => {
                   ))}
                 </div>
 
-                <div className="order-card-footer">
+                <div className="order-card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                     Payment: {order.paymentId ? `✅ ${order.paymentId.slice(0, 16)}...` : 'N/A'}
                   </span>
-                  <span className="pizza-price">₹{order.totalPrice}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <span className="pizza-price">₹{order.totalPrice}</span>
+                    <button 
+                      className="btn btn-primary btn-sm" 
+                      onClick={() => handleReorder(order)}
+                    >
+                      🔄 Reorder
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

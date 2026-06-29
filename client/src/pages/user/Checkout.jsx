@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 const Checkout = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(user?.address || '');
 
   useEffect(() => {
     const saved = sessionStorage.getItem('pizza_order');
@@ -87,9 +89,9 @@ const Checkout = () => {
           }
         },
         prefill: {
-          name: 'Test User',
-          email: 'test@example.com',
-          contact: '9999999999',
+          name: user?.name || 'Customer',
+          email: user?.email || '',
+          contact: user?.phone || '',
         },
         theme: {
           color: '#e94560',
