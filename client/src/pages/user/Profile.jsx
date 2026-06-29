@@ -5,7 +5,7 @@ import API from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
-  const { user, token, login } = useAuth(); // using login to update context user state
+  const { token, login } = useAuth(); // using login to update context user state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,6 +25,7 @@ const Profile = () => {
           address: data.user.address || ''
         });
       } catch (error) {
+        console.error('Failed to fetch profile:', error);
         toast.error('Failed to load profile data.');
       }
     };

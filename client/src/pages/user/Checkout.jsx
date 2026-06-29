@@ -7,19 +7,19 @@ import { useAuth } from '../../context/AuthContext';
 const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [orderData, setOrderData] = useState(null);
+  const [orderData] = useState(() => {
+    const saved = sessionStorage.getItem('pizza_order');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(user?.address || '');
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('pizza_order');
-    if (!saved) {
+    if (!orderData) {
       toast.error('No pizza order found. Please build a pizza first.');
       navigate('/build-pizza');
-      return;
     }
-    setOrderData(JSON.parse(saved));
-  }, [navigate]);
+  }, [orderData, navigate]);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -85,6 +85,7 @@ const Checkout = () => {
               navigate('/my-orders');
             }
           } catch (error) {
+            console.error('Payment handler error:', error);
             toast.error('Order placement failed. Please contact support.');
           }
         },
