@@ -1,5 +1,5 @@
 const Order = require('../models/Order');
-const { deductStock, checkStockLevels } = require('../utils/stockChecker');
+const { deductStock } = require('../utils/stockChecker');
 
 exports.createOrder = async (req, res) => {
   try {
@@ -19,8 +19,6 @@ exports.createOrder = async (req, res) => {
     await order.save();
 
     const itemIds = await deductStock(pizzaDetails);
-
-    await checkStockLevels(itemIds);
 
     res.status(201).json({ 
       message: 'Order placed successfully!', 

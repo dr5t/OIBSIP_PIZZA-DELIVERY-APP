@@ -7,6 +7,9 @@ dotenv.config();
 
 connectDB();
 
+const startInventoryCron = require('./cron/inventoryCron');
+startInventoryCron();
+
 const app = express();
 
 app.use(cors({

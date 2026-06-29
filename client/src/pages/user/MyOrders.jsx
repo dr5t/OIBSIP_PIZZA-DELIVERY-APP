@@ -13,21 +13,31 @@ const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchOrders = async () => {
-    try {
-      const { data } = await API.get('/orders/my-orders');
-      setOrders(data.orders);
-    } catch (error) {
-      console.error('Failed to load orders:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let mounted = true;
+
+    const fetchOrders = async () => {
+      try {
+        const { data } = await API.get('/orders/my-orders');
+        if (mounted) {
+          setOrders(data.orders);
+        }
+      } catch (error) {
+        console.error('Failed to load orders:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchOrders();
     const interval = setInterval(fetchOrders, 30000);
-    return () => clearInterval(interval);
+    
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   const formatDate = (dateStr) => {

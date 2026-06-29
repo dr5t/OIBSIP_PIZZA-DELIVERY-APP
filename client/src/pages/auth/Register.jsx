@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FiUser, FiMail, FiLock, FiShield } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 import API from '../../api/axios';
 
 const Register = () => {
@@ -132,22 +132,6 @@ const Register = () => {
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="role">
-                <FiShield style={{ marginRight: 6, verticalAlign: 'middle' }} />
-                Account Type
-              </label>
-              <select
-                id="role"
-                name="role"
-                className="form-input"
-                value={formData.role}
-                onChange={handleChange}
-              >
-                <option value="user">Customer</option>
-                <option value="admin">Restaurant Admin</option>
-              </select>
-            </div>
 
             <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} disabled={loading} id="btn-register">
               {loading ? 'Creating Account...' : 'Create Account'}
