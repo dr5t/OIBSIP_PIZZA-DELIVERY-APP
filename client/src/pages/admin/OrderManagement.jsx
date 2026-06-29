@@ -59,6 +59,45 @@ const OrderManagement = () => {
     ? orders 
     : orders.filter(o => o.status === filter);
 
+  const handleExportCSV = () => {
+    if (filteredOrders.length === 0) {
+      toast.error('No orders to export.');
+      return;
+    }
+
+    const headers = ['Order ID', 'Customer Name', 'Email', 'Pizza Details', 'Total Price (INR)', 'Status', 'Date'];
+    const rows = filteredOrders.map(order => {
+      const pizzaStr = [
+        order.pizzaDetails?.base?.name,
+        order.pizzaDetails?.sauce?.name,
+        order.pizzaDetails?.cheese?.name,
+        ...(order.pizzaDetails?.veggies?.map(v => v.name) || []),
+        ...(order.pizzaDetails?.meats?.map(m => m.name) || [])
+      ].filter(Boolean).join(' | ');
+
+      return [
+        order._id,
+        `"${order.customerName || order.user?.name || 'N/A'}"`,
+        `"${order.user?.email || 'N/A'}"`,
+        `"${pizzaStr}"`,
+        order.totalPrice,
+        order.status,
+        `"${formatDate(order.createdAt)}"`
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `pizza_orders_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Orders exported to CSV!');
+  };
+
   if (loading) {
     return (
       <div className="page-wrapper">
@@ -75,7 +114,7 @@ const OrderManagement = () => {
           <p>Manage and update customer order statuses</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap', alignItems: 'center' }}>
           <button
             className={`btn btn-sm ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter('all')}
@@ -96,6 +135,15 @@ const OrderManagement = () => {
               </button>
             );
           })}
+          
+          <button 
+            className="btn btn-sm btn-outline" 
+            style={{ marginLeft: 'auto' }}
+            onClick={handleExportCSV}
+            title="Download visible orders as CSV"
+          >
+            ⬇️ Export CSV
+          </button>
         </div>
 
         {filteredOrders.length === 0 ? (

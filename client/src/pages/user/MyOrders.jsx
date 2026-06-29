@@ -13,6 +13,17 @@ const MyOrders = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [printingId, setPrintingId] = useState(null);
+
+  const handlePrint = (orderId) => {
+    setPrintingId(orderId);
+    document.body.classList.add('print-active');
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('print-active');
+      setPrintingId(null);
+    }, 150);
+  };
 
   const handleReorder = (order) => {
     sessionStorage.setItem('pizza_order', JSON.stringify({
@@ -94,10 +105,17 @@ const MyOrders = () => {
         ) : (
           <div>
             {orders.map((order, idx) => (
-              <div key={order._id} className="order-card animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
+              <div 
+                key={order._id} 
+                className={`order-card animate-fade-up ${printingId === order._id ? 'print-target' : ''}`} 
+                style={{ animationDelay: `${idx * 0.1}s` }}
+              >
                 <div className="order-card-header">
                   <div>
-                    <div className="order-id">Order #{order._id.slice(-8).toUpperCase()}</div>
+                    <div className="order-id">
+                      Order #{order._id.slice(-8).toUpperCase()}
+                      {printingId === order._id && <span className="receipt-title"> - INVOICE/RECEIPT</span>}
+                    </div>
                     <div className="order-date">{formatDate(order.createdAt)}</div>
                   </div>
                   <span className={`status-badge ${STATUS_CONFIG[order.status]?.class || ''}`}>
@@ -152,10 +170,18 @@ const MyOrders = () => {
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                     Payment: {order.paymentId ? `✅ ${order.paymentId.slice(0, 16)}...` : 'N/A'}
                   </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div className="order-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <span className="pizza-price">₹{order.totalPrice}</span>
+                    {order.status === 'Delivered' && (
+                      <button 
+                        className="btn btn-outline btn-sm no-print"
+                        onClick={() => handlePrint(order._id)}
+                      >
+                        📄 Print Receipt
+                      </button>
+                    )}
                     <button 
-                      className="btn btn-primary btn-sm" 
+                      className="btn btn-primary btn-sm no-print" 
                       onClick={() => handleReorder(order)}
                     >
                       🔄 Reorder
