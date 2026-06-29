@@ -14,6 +14,7 @@ import Dashboard from './pages/user/Dashboard';
 import PizzaBuilder from './pages/user/PizzaBuilder';
 import Checkout from './pages/user/Checkout';
 import MyOrders from './pages/user/MyOrders';
+import Profile from './pages/user/Profile';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Inventory from './pages/admin/Inventory';
@@ -55,6 +56,9 @@ const AppRoutes = () => {
       } />
       <Route path="/my-orders" element={
         <ProtectedRoute><MyOrders /></ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute><Profile /></ProtectedRoute>
       } />
 
       <Route path="/admin" element={

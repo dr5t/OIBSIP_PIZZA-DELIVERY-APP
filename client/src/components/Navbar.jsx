@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiLogOut, FiHome, FiShoppingBag, FiPackage, FiBox } from 'react-icons/fi';
+import { FiLogOut, FiHome, FiShoppingBag, FiPackage, FiBox, FiUser } from 'react-icons/fi';
 
 const Navbar = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
@@ -47,6 +47,9 @@ const Navbar = () => {
               </Link>
               <Link to="/my-orders" className={`nav-link ${isActive('/my-orders')}`} id="nav-my-orders">
                 <FiShoppingBag style={{ marginRight: 4 }} /> My Orders
+              </Link>
+              <Link to="/profile" className={`nav-link ${isActive('/profile')}`} id="nav-profile">
+                <FiUser style={{ marginRight: 4 }} /> Profile
               </Link>
             </>
           )}
